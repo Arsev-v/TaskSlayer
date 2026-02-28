@@ -1,47 +1,75 @@
-import { useState} from 'react'
+import { useState } from "react";
 
-function App () {
-  // 1. This is "State" - Think of it as the Player's Stats
+function App() {
+  /* =========================
+     PLAYER STATE (Stats)
+  ========================== */
   const [xp, setXp] = useState(0);
   const [level, setLevel] = useState(1);
-  const [xpToNextLevel, setXpToNextLevel] = useState(100)
+  const [xpToNextLevel, setXpToNextLevel] = useState(100);
 
-  // 2. This is a "Function" - This is a Game Rule
+  const XP_GAIN = 50; // XP per quest
+
+  /* =========================
+     GAME LOGIC
+  ========================== */
   const gainXP = () => {
-    const xpGain = 50; // How much you get per quest
-    const newXp = xp + xpGain;
+    const newXp = xp + XP_GAIN;
 
-    // 3. Check against the dynamic variable instead of "100"
-    if (newXp >= xpToNextLevel){
-      setLevel(level + 1);
-      setXp(0);
-      // 4. Scaling Formula: Make the next level 50% harder
-      setXpToNextLevel(Math.floor(xpToNextLevel * 1.5));
+    if (newXp >= xpToNextLevel) {
+      levelUp();
     } else {
       setXp(newXp);
     }
   };
 
+  const levelUp = () => {
+    setLevel((prev) => prev + 1);
+    setXp(0);
+    setXpToNextLevel((prev) => Math.floor(prev * 1.5));
+  };
+
+  /* =========================
+     UI
+  ========================== */
   return (
-    <div style={{ textAlign: 'center', fontFamily: 'sans-serif', padding: '20px'}}>
+    <div style={styles.container}>
       <h1>RPG Task Slayer ⚔️</h1>
       <h2>Level: {level}</h2>
 
-      {/* 5. Display the dynamic target */}
-      <p>Experience: {xp} / {xpToNextLevel}</p>
+      <p>
+        Experience: {xp} / {xpToNextLevel}
+      </p>
 
-      <progress value={xp} max={xpToNextLevel} style={{width: '200px', height: '20px'}}></progress>
-      <br /><br />
+      <progress
+        value={xp}
+        max={xpToNextLevel}
+        style={styles.progress}
+      />
 
-      {/* 3. The Button - Our first interation */}
+      <br />
+      <br />
+
       <button onClick={gainXP}>
-        Complete Fitness Goal ( +{50} XP )
+        Complete Fitness Goal (+{XP_GAIN} XP)
       </button>
     </div>
   );
 }
 
-// Quest inputs
-
+/* =========================
+   STYLES (Separated Cleanly)
+========================== */
+const styles = {
+  container: {
+    textAlign: "center",
+    fontFamily: "sans-serif",
+    padding: "20px",
+  },
+  progress: {
+    width: "200px",
+    height: "20px",
+  },
+};
 
 export default App;
